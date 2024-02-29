@@ -64,7 +64,7 @@ fun MessageCard(message: Message) {
             painter = painterResource(id = R.drawable.nature_pic),
             contentDescription = "userImage",
             modifier = Modifier
-                .size(44.dp)
+                .size(60.dp)
                 .clip(CircleShape)
                 .border(
                     1.5.dp,
