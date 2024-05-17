@@ -2,4 +2,13 @@
     <string name="app_name">Compose Example</string>
     <string name="show_more">Show more</string>
     <string name="show_less">Show less</string>
+    <string name="swift">IOS Platform</string>
+    <string name="java">Platform Independent</string>
+    <string name="ruby">Programmer\'s Best friend</string>
+    <string name="c_sharp">Game Development</string>
+    <string name="scala">JVM language</string>
+    <string name="python">Data Science</string>
+    <string name="typescript">Superset set of JS</string>
+    <string name="top_languages">Top languages</string>
+    <string name="favourite_collections">Most Popular</string>
 </resources>
