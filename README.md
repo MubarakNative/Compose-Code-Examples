@@ -1,6 +1,15 @@
-# Compose Sample
-This simple app shows how to create a chat screen in compose this repo is bases on compose basic in official android page
+# Compose Code Examples
 
-### Note 👀
+In this repository you can find multiple basic compose codelab app samples all
+samples are divided into corresponding branches.
 
-**This App doesn't focus on Building Modern Material Ui the UI looks clean**
+**In this current branch ```ChatScreen``` we build very simple chat screen using compose
+Checkout the official [Compose Tutorial](https://developer.android.com/develop/ui/compose/tutorial)**
+
+## **Checkout other branches** 
+
+### ```code-along-demo```
+
+### ```compose-layout```
+
+### ```compose-state```
