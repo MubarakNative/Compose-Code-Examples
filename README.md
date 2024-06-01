@@ -13,3 +13,5 @@ Checkout the official [Compose Tutorial](https://developer.android.com/develop/u
 ### ```compose-layout```
 
 ### ```compose-state```
+
+### ```compose-navigation```  Implemented new compose Typesafe navigation
