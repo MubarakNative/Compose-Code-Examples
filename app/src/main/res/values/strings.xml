@@ -11,4 +11,9 @@
     <string name="typescript">Superset set of JS</string>
     <string name="top_languages">Top languages</string>
     <string name="favourite_collections">Most Popular</string>
+    <string name="home">Home</string>
+    <string name="draw">Draw</string>
+    <string name="edit">Edit</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings\n</string>
 </resources>

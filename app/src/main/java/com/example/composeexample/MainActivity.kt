@@ -4,17 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Draw
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,104 +30,111 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.example.composeexample.ui.theme.ComposeExampleTheme
-import kotlinx.serialization.Serializable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.window.core.layout.WindowWidthSizeClass
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ComposeExampleTheme {
-                var text by rememberSaveable {
-                    mutableStateOf("")
-                }
-                val navController = rememberNavController()
-
-                NavHost(navController = navController, startDestination = Message) {
-                    composable<Message> {
-                        MessageScreen(text = text, onValueChange = { text = it }) {
-                            navController.navigate(Greeting(name = text))
-                        }
-                    }
-
-                    composable<Greeting> {
-                        val greeting = it.toRoute<Greeting>()
-                        WishScreen(greeting = greeting)
-                    }
-                }
+            Scaffold {
+                App(modifier = Modifier.padding(it))
             }
         }
     }
 }
 
-@Composable
-fun MessageScreen(
-    modifier: Modifier = Modifier,
-    text: String,
-    onValueChange: (String) -> Unit,
-    onClick: () -> Unit
+enum class AppDestinations(
+    @StringRes val label: Int,
+    val icon: ImageVector,
+    @StringRes val contentDescription: Int
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    HOME(R.string.home, Icons.Default.Home, R.string.home),
+    DRAWING(R.string.draw, Icons.Default.Draw, R.string.draw),
+    EDIT(R.string.edit, Icons.Default.Edit, R.string.edit),
+    SETTINGS(R.string.profile, Icons.Default.Person, R.string.settings),
+}
+
+@Composable
+fun App(modifier: Modifier = Modifier) {
+
+    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+
+    val myNavigationSuiteItemColors = NavigationSuiteDefaults.itemColors(
+        navigationBarItemColors = NavigationBarItemDefaults.colors(
+            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+    )
+
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+
+    val customNavSuiteType = with(adaptiveInfo) {
+        if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+            NavigationSuiteType.NavigationRail
+        } else {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+        }
+    }
+    NavigationSuiteScaffold(
+        layoutType = customNavSuiteType, // only for further customization ourselves
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
+            navigationBarContainerColor = Color.Transparent,
+        ),
+        navigationSuiteItems = {
+            AppDestinations.entries.forEach {
+                item(
+                    icon = {
+                        Icon(
+                            it.icon,
+                            contentDescription = stringResource(it.contentDescription)
+                        )
+                    },
+                    label = { Text(stringResource(it.label)) },
+                    selected = it == currentDestination,
+                    onClick = { currentDestination = it },
+                    colors = myNavigationSuiteItemColors
+                )
+            }
+        }
     ) {
-        TextField(
-            value = text,
-            onValueChange = onValueChange,
-            placeholder = {
-                Text(text = "Enter your name")
-            },
-            modifier = modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = {
-            onClick()
-        }) {
-            Text(text = "Go")
+        // TODO: Destination content.
+        when (currentDestination) {
+            AppDestinations.HOME -> HomeDestination()
+            AppDestinations.DRAWING -> DrawingDestination()
+            AppDestinations.EDIT -> EditDestination()
+            AppDestinations.SETTINGS -> SettingsDestination()
         }
     }
 }
 
 @Composable
-fun WishScreen(
-    modifier: Modifier = Modifier,
-    greeting: Greeting
-) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "Welcome ${greeting.name}!", modifier = modifier)
+fun SettingsDestination() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = stringResource(id = R.string.profile))
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun WishScreenPreview() {
-    ComposeExampleTheme {
-        WishScreen(greeting = Greeting("Mubarak"))
+fun EditDestination() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = stringResource(id = R.string.edit))
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun MessageScreenPreview() {
-    ComposeExampleTheme {
-        MessageScreen(text = "Enter your name", onValueChange = {}) {}
+fun DrawingDestination() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = stringResource(id = R.string.draw))
     }
 }
 
-@Serializable
-object Message
-
-@Serializable
-data class Greeting(
-    val name: String
-)
+@Composable
+fun HomeDestination() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = stringResource(id = R.string.home))
+    }
+}
