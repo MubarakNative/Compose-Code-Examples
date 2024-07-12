@@ -71,9 +71,13 @@ dependencies {
     // Kotlinx-Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    //
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+
     // NavigationSuiteScaffold
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta04")
 
+    implementation("io.coil-kt:coil-compose:2.6.0")
     // Material Icon extended
     implementation(libs.androidx.material.icons.extended)
 
